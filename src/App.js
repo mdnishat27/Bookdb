@@ -1,25 +1,90 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Navbar from "./components/Navbar";
+import Searchbar from "./components/Searchbar";
+import BookList from "./components/BookList";
+import ReactPaginate from 'react-paginate';
+import { getBooksByTerm } from "./api/Googleapi";
+import Link from 'react-router-dom';
+import BookDetails from "./components/BookDetails";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const Home = () =>{
+
 }
+
+const Bookdetails = (books) => {
+  return (<BookDetails books={books}/>)
+}
+
+const App = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [books, setBooks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await getBooksByTerm(searchTerm, setBooks, currentPage, setTotalPages);
+  };
+
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const nextPage = async (page_number) => {
+    await getBooksByTerm(searchTerm, setBooks, page_number.selected+1, setTotalPages);
+    setCurrentPage(page_number.selected+1);
+  };
+
+  const sortbooks = async (sort) => {
+    await getBooksByTerm(searchTerm, setBooks, 1, setTotalPages, sort);
+  }
+
+  return (
+      <div>
+        <Navbar />
+        {
+          // todo: fix handlechange in searchbar
+        }
+        <div>
+        <Searchbar handleChange={handleChange} handleSubmit={handleSubmit} />
+        {totalPages > 1 ? (
+            <div className="row">
+              <div className="col s2 offset-s8">
+                <select className="browser-default">
+                  <option value="" disabled selected>Sort</option>
+                  <option value="1" onClick={() => {
+                    sortbooks("relevance");
+                  }}>by relevance</option>
+                  <option value="2" onClick={() => {
+                    sortbooks("newest");
+                  }}>by newest</option>
+                </select>
+              </div>
+            </div>) : ("")
+        }
+        <BookList books={books} />
+        {totalPages > 1 ? (
+            <div align="center">
+            <ReactPaginate
+                previousLabel={'previous'}
+                nextLabel={'next'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={totalPages}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={nextPage}
+                containerClassName={'pagination'}
+                subContainerClassName={'pages pagination'}
+                activeClassName={'active'}
+            />
+            </div>
+        ) : (
+            ""
+        )}
+        </div>
+      </div>
+  );
+};
 
 export default App;
