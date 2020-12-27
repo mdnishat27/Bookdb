@@ -1,5 +1,6 @@
 import react from "react";
 import { unstable_renderSubtreeIntoContainer } from "react-dom";
+import {Link} from "react-router-dom";
 
 const Book = (props) => {
     let ImageURL;
@@ -30,6 +31,9 @@ const Book = (props) => {
                 <div className="card-content">
                     <p><b>{props.data.volumeInfo.title} </b></p>
                     By {props.data.volumeInfo.authors}
+                </div>
+                <div className="card-action">
+                    <Link to={{pathname:"/book/"+props.data.id, book_id:props.data.id}}>See details</Link>
                 </div>
             </div>
         </div>

@@ -1,19 +1,8 @@
 import React, { useState } from "react";
-import Navbar from "./components/Navbar";
 import Searchbar from "./components/Searchbar";
 import BookList from "./components/BookList";
 import ReactPaginate from 'react-paginate';
 import { getBooksByTerm } from "./api/Googleapi";
-import Link from 'react-router-dom';
-import BookDetails from "./components/BookDetails";
-
-const Home = () =>{
-
-}
-
-const Bookdetails = (books) => {
-  return (<BookDetails books={books}/>)
-}
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,10 +30,6 @@ const App = () => {
 
   return (
       <div>
-        <Navbar />
-        {
-          // todo: fix handlechange in searchbar
-        }
         <div>
         <Searchbar handleChange={handleChange} handleSubmit={handleSubmit} />
         {totalPages > 1 ? (
